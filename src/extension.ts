@@ -33,6 +33,9 @@ export function activate(context: ExtensionContext) {
                 }
             });
         })
+    let restartCommand = commands.registerCommand('gmusic.restart', () => {
+        gMusic = new gMusicClass(context);
+    })
 
     context.subscriptions.push(playpauseCommand);
     context.subscriptions.push(shuffleCommand);
@@ -40,10 +43,6 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(rewindCommand);
     context.subscriptions.push(likeCommand);
     context.subscriptions.push(gMusic);
-}
-
-// Called when extension is deactivated
-export function deactivate() {
 }
 
 interface track {
@@ -144,7 +143,7 @@ export class gMusicClass {
             }
         });
 
-        this.ws.on('error', (err) => window.showErrorMessage('An error occured when talking with GPMDP! Error: ' + err));
+        this.ws.on('error', (err) => this.dispose);
     }
 
     public refreshStatusBar() {

@@ -21,6 +21,4 @@ Connecting VS Code with the [Unofficial Google Play Music Desktop Player](https:
 
 ## Release Notes
 
-### 1.0.0
-
-Initial release of vscode-gmusic
+[See CHANGELOG.md](CHANGELOG.md)
