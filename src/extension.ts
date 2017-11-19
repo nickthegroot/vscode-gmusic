@@ -3,7 +3,6 @@
 // Import the module and reference it with the alias vscode in your code below
 import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem } from 'vscode';
 import * as WebSocket from 'ws';
-import Cache from 'vscode-cache';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -16,6 +15,7 @@ export function activate(context: ExtensionContext) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
     let disposable = commands.registerCommand('extension.sayHello', () => {
+        
         // The code you place here will be executed every time your command is executed
         let gMusic = new gMusicClass(context);
 
@@ -70,37 +70,48 @@ export class gMusicClass {
     private ws: any;
 
     constructor(context: ExtensionContext) {
+        const Cache = require('vscode-cache');
+        
         // Create as needed
         if (!this._statusBarItem) {
             this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         }
 
-        this.ws = new WebSocket('ws://localhost:5672')
+        this.ws = new WebSocket('ws://localhost:5672');
+        let codeCache = new Cache(context);
 
         // Being "polite" and asking GPMDP if we can have control.
         this.ws.on('open', () => {
-            this.ws.send(JSON.stringify({
-                namespace: 'connect',
-                method: 'connect',
-                arguments: ['vscode-gmusic']
-            }))
+            if (codeCache.has('authCode')) {
+                this.ws.send(JSON.stringify({
+                    namespace: 'connect',
+                    method: 'connect',
+                    arguments: ['vscode-gmusic', codeCache.get('authCode')]
+                }))
+            } else {
+                this.ws.send(JSON.stringify({
+                    namespace: 'connect',
+                    method: 'connect',
+                    arguments: ['vscode-gmusic']
+                }))
+            }
         })
 
         // Receiving data from GPMDP.
         this.ws.on('message', (data) => {
             let gMusicResponse: gMusicResponse = JSON.parse(data);
-            console.log(data);
             switch (gMusicResponse.channel) {
                 case 'connect':
                     if (gMusicResponse.payload === 'CODE_REQUIRED') {
-                        // TODO: Store code and enter it.
                         window.showInputBox({ prompt: 'Please input the number shown on GPMDP' }).then(code => {
                             this.ws.send(JSON.stringify({
                                 namespace: 'connect',
                                 method: 'connect',
                                 arguments: ['vscode-gmusic', code]
-                            }))
-                        })
+                                }))
+                            })
+                        } else {
+                            codeCache.put('authCode', gMusicResponse.payload)
                     }
                     break;
                 case 'playState':
