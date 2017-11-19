@@ -19,6 +19,10 @@ Connecting VS Code with the [Unofficial Google Play Music Desktop Player](https:
 * **Make sure the Playback API is enabled in Desktop Settings! vscode-gmusic will not work without it!**
 ![Enable Playback API](.github/playbackAPI.gif)
 
+## Known Issues
+
+* Like/Dislike doesn't work when listening to a radio. (see nbd9/vscode-gmusic#1)
+
 ## Release Notes
 
 [See CHANGELOG.md](CHANGELOG.md)
