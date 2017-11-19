@@ -36,7 +36,6 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(playpauseCommand);
     context.subscriptions.push(shuffleCommand);
-    context.subscriptions.push(repeatCommand);
     context.subscriptions.push(skipCommand);
     context.subscriptions.push(rewindCommand);
     context.subscriptions.push(likeCommand);
