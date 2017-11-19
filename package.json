@@ -21,8 +21,8 @@
                 "title": "GMusic: Toggle Play Pause"
             },
             {
-                "command": "gmusic.repeat",
-                "title": "GMusic: Set Repeat"
+                "command": "gmusic.shuffle",
+                "title": "GMusic: Toggle Shuffle"
             },
             {
                 "command": "gmusic.skip",
