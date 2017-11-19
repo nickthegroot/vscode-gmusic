@@ -1,12 +1,32 @@
 {
     "name": "vscode-gmusic",
     "displayName": "vscode-gmusic",
-    "description": "Extends the unofficial GPMDP to VS Code",
-    "version": "0.0.1",
+    "description": "Connecting VS Code with the Unofficial Google Play Music Desktop Player",
+    "version": "1.0.0",
     "publisher": "nbdeg",
+    "author": {
+        "name": "Nick DeGroot"
+    },
+    "license": "SEE LICENSE IN LICENSE",
+    "homepage": "https://github.com/nbd9/vscode-gmusic",
+    "bugs": {
+        "url": "https://github.com/nbd9/vscode-gmusic/issues",
+        "email": "contact@nbdeg.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nbd9/vscode-gmusic.git"
+    },
+    "icon": ".github/icon.png",
     "engines": {
         "vscode": "^1.18.0"
     },
+    "keywords": [
+        "Google Play Music",
+        "Google Play Music Desktop Player",
+        "GPMDP",
+        "Play Music"
+    ],
     "categories": [
         "Other"
     ],

@@ -1,7 +1,7 @@
 # vscode-gmusic
 
 ![Overview](.github/Commands.png)
-Connecting VS Code with the [Unofficial Google Play Desktop Player](https://googleplaymusicdesktopplayer.com/)
+Connecting VS Code with the [Unofficial Google Play Music Desktop Player](https://googleplaymusicdesktopplayer.com/)
 
 ## Features
 
@@ -15,7 +15,7 @@ Connecting VS Code with the [Unofficial Google Play Desktop Player](https://goog
 
 ## Requirements
 
-* [Unofficial Google Play Desktop Player](https://googleplaymusicdesktopplayer.com/)
+* [Unofficial Google Play Music Desktop Player](https://googleplaymusicdesktopplayer.com/)
 * **Make sure the Playback API is enabled in Desktop Settings! vscode-gmusic will not work without it!**
 ![Enable Playback API](.github/playbackAPI.gif)
 
