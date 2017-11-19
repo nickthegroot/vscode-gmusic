@@ -1,32 +1,49 @@
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem } from 'vscode';
 import * as WebSocket from 'ws';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "vscode-gmusic" is now active!');
+    let gMusic = new gMusicClass(context);
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = commands.registerCommand('extension.sayHello', () => {
-        
-        // The code you place here will be executed every time your command is executed
-        let gMusic = new gMusicClass(context);
-
-        // Display a message box to the user
-        window.showInformationMessage('Enabling vscode-gmusic...');
+    let playpauseCommand = commands.registerCommand('gmusic.playpause', () => {
+        gMusic.togglePlay();
     });
+    let shuffleCommand = commands.registerCommand('gmusic.shuffle', () => {
+        gMusic.toggleShuffle();
+    });
+    let skipCommand = commands.registerCommand('gmusic.skip', () => {
+        gMusic.forward();
+    });
+    let rewindCommand = commands.registerCommand('gmusic.rewind', () => {
+        gMusic.rewind();
+    });
+    let likeCommand = commands.registerCommand('gmusic.setThumbs', () => {
+        window.showQuickPick(['Thumbs Up', 'Thumbs Down', 'Remove Rating'])
+            .then(val => {
+                switch (val) {
+                    case 'Thumbs Up':
+                        gMusic.setThumbs(true, false);
+                        break;
+                    case 'Thumbs Down':
+                        gMusic.setThumbs(false, true);
+                        break;
+                    case 'Remove Rating':
+                        gMusic.setThumbs(false, false);
+                        break;
+                }
+            });
+        })
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(playpauseCommand);
+    context.subscriptions.push(shuffleCommand);
+    context.subscriptions.push(repeatCommand);
+    context.subscriptions.push(skipCommand);
+    context.subscriptions.push(rewindCommand);
+    context.subscriptions.push(likeCommand);
+    context.subscriptions.push(gMusic);
 }
 
-// this method is called when your extension is deactivated
+// Called when extension is deactivated
 export function deactivate() {
 }
 
@@ -35,10 +52,6 @@ interface track {
     artist: string;
     album: string;
     albumArt: string;
-}
-interface time {
-    current: number;
-    total: number;
 }
 
 interface gMusicResponse {
@@ -62,7 +75,6 @@ export class gMusicClass {
 
     private _playState: boolean;
     private _track: track;
-    private _time: time;
     private _rating: rating;
     private _shuffle: string;
     private _repeat: string;
@@ -119,11 +131,7 @@ export class gMusicClass {
                     break;
                 case 'track':
                     this._track = gMusicResponse.payload;
-                    this._statusBarItem.text = this._track.title
-                    this._statusBarItem.show();
-                    break;
-                case 'time':
-                    this._time = gMusicResponse.payload;
+                    this.refreshStatusBar();
                     break;
                 case 'rating':
                     this._rating = gMusicResponse.payload;
@@ -138,6 +146,12 @@ export class gMusicClass {
         });
 
         this.ws.on('error', (err) => window.showErrorMessage('An error occured when talking with GPMDP! Error: ' + err));
+    }
+
+    public refreshStatusBar() {
+        let textItem = this._track ? '$(triangle-right) ' + this._track.title + ' - ' + this._track.artist : '$(primitive-square)'
+        this._statusBarItem.text = textItem
+        this._statusBarItem.show();
     }
 
     public togglePlay() {
@@ -201,4 +215,7 @@ export class gMusicClass {
         }))
     }
 
+    public dispose() {
+        this._statusBarItem.dispose();
+    }
 }

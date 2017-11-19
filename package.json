@@ -11,14 +11,30 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "*"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "gmusic.playpause",
+                "title": "GMusic: Toggle Play Pause"
+            },
+            {
+                "command": "gmusic.repeat",
+                "title": "GMusic: Set Repeat"
+            },
+            {
+                "command": "gmusic.skip",
+                "title": "GMusic: Skip Song"
+            },
+            {
+                "command": "gmusic.rewind",
+                "title": "GMusic: Rewind Song"
+            },
+            {
+                "command": "gmusic.setThumbs",
+                "title": "GMusic: Like/Dislike Song"
             }
         ]
     },
