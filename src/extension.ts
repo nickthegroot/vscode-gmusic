@@ -76,7 +76,6 @@ export class gMusicClass {
         }
 
         this.ws = new WebSocket('ws://localhost:5672')
-        // let musicCache = new Cache(context);
 
         // Being "polite" and asking GPMDP if we can have control.
         this.ws.on('open', () => {
@@ -94,97 +93,40 @@ export class gMusicClass {
             switch (gMusicResponse.channel) {
                 case 'connect':
                     if (gMusicResponse.payload === 'CODE_REQUIRED') {
-                        // if (musicCache.has('authCode')) {
-                        //     this.ws.send(JSON.stringify({
-                        //         namespace: 'connect',
-                        //         method: 'connect',
-                        //         arguments: ['vscode-gmusic', musicCache.get('authCode')]
-                        //     }))
-                        // } else {
+                        // TODO: Store code and enter it.
                         window.showInputBox({ prompt: 'Please input the number shown on GPMDP' }).then(code => {
-                            console.log(code);
                             this.ws.send(JSON.stringify({
                                 namespace: 'connect',
                                 method: 'connect',
                                 arguments: ['vscode-gmusic', code]
                             }))
                         })
-                        // }
-                    // } else {
-                    //     musicCache.put('authCode', gMusicResponse.payload)
                     }
                     break;
-                case 'PlayState':
+                case 'playState':
                     this._playState = gMusicResponse.payload;
                     break;
-                case 'Track':
+                case 'track':
                     this._track = gMusicResponse.payload;
+                    this._statusBarItem.text = this._track.title
+                    this._statusBarItem.show();
                     break;
-                case 'Time':
+                case 'time':
                     this._time = gMusicResponse.payload;
                     break;
-                case 'Rating':
+                case 'rating':
                     this._rating = gMusicResponse.payload;
                     break;
-                case 'Shuffle':
+                case 'shuffle':
                     this._shuffle = gMusicResponse.payload;
                     break;
-                case 'Repeat':
+                case 'repeat':
                     this._repeat = gMusicResponse.payload;
                     break;
             }
         });
 
         this.ws.on('error', (err) => window.showErrorMessage('An error occured when talking with GPMDP! Error: ' + err));
-    }
-
-    public get playState(): boolean {
-        return this._playState;
-    }
-
-    public set playState(value: boolean) {
-        this._playState = value;
-    }
-
-    public get track(): track {
-        return this._track;
-    }
-
-    public set track(value: track) {
-        this._track = value;
-        this._statusBarItem.text = value.title
-    }
-
-    public get time(): time {
-        return this._time;
-    }
-
-    public set time(value: time) {
-        this._time = value;
-    }
-
-    public get rating(): rating {
-        return this._rating;
-    }
-
-    public set rating(value: rating) {
-        this._rating = value;
-    }
-
-    public get shuffle(): string {
-        return this._shuffle;
-    }
-
-    public set shuffle(value: string) {
-        this._shuffle = value;
-    }
-
-    public get repeat(): string {
-        return this._repeat;
-    }
-
-    public set repeat(value: string) {
-        this._repeat = value;
     }
 
     public togglePlay() {
