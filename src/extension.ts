@@ -22,17 +22,18 @@ export function activate(context: ExtensionContext) {
             .then(val => {
                 switch (val) {
                     case 'Thumbs Up':
-                        gMusic.setThumbs(true, false);
+                        gMusic.thumbsUp();
                         break;
                     case 'Thumbs Down':
-                        gMusic.setThumbs(false, true);
+                        gMusic.thumbsDown();
                         break;
                     case 'Remove Rating':
-                        gMusic.setThumbs(false, false);
+                        gMusic.removeThumbs();
                         break;
                 }
-            });
-        })
+            }
+        );
+    });
     let restartCommand = commands.registerCommand('gmusic.restart', () => {
         gMusic.dispose();
         gMusic = new gMusicClass(context);
@@ -144,7 +145,7 @@ export class gMusicClass {
             }
         });
 
-        this.ws.on('error', (err) => this.dispose);
+        this.ws.on('error', (err) => window.showErrorMessage(`GMusic: WebSocket failed to connect`));
     }
 
     public refreshStatusBar() {
@@ -193,24 +194,31 @@ export class gMusicClass {
         }))
     }
 
-    public setThumbs(thumbsUp: boolean, thumbsDown: boolean) {
-        let numberRating = 0;
-        if (thumbsUp) {
-            numberRating = 5;
-        } else if (thumbsDown) {
-            numberRating = 1
-        } else {
+    public thumbsUp() {
+        if (!this._rating.liked) {
             this.ws.send(JSON.stringify({
                 namespace: 'rating',
-                method: 'resetRating',
+                method: 'toggleThumbsUp',
                 arguments: null
             }))
-            return
         }
+    }
+
+    public thumbsDown() {
+        if (!this._rating.disliked) {
+            this.ws.send(JSON.stringify({
+                namespace: 'rating',
+                method: 'toggleThumbsDown',
+                arguments: null
+            }))
+        }
+    }
+
+    public removeThumbs() {
         this.ws.send(JSON.stringify({
             namespace: 'rating',
-            method: 'setRating',
-            arguments: numberRating
+            method: 'resetRating',
+            arguments: null
         }))
     }
 
