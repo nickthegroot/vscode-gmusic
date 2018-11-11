@@ -34,6 +34,7 @@ export function activate(context: ExtensionContext) {
             });
         })
     let restartCommand = commands.registerCommand('gmusic.restart', () => {
+        gMusic.dispose();
         gMusic = new gMusicClass(context);
     })
 
@@ -64,7 +65,7 @@ interface rating {
 
 /**
  * Constantly changing class that holds GPMDP data
- * 
+ *
  * @export
  * @class gMusicData
  */
@@ -81,7 +82,7 @@ export class gMusicClass {
 
     constructor(context: ExtensionContext) {
         const Cache = require('vscode-cache');
-        
+
         // Create as needed
         if (!this._statusBarItem) {
             this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
