@@ -70,19 +70,19 @@
             "touchBar": [
                 {
                     "command": "gmusic.rewind",
-                    "group": "TBControls"
+                    "group": "GMusic@1"
                 },
                 {
                     "command": "gmusic.playpause",
-                    "group": "TBControls"
+                    "group": "GMusic@2"
                 },
                 {
                     "command": "gmusic.skip",
-                    "group": "TBControls"
+                    "group": "GMusic@3"
                 },
                 {
                     "command": "gmusic.shuffle",
-                    "group": "TBControls"
+                    "group": "GMusic@4"
                 }
 
             ]
