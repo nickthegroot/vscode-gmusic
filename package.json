@@ -38,19 +38,24 @@
         "commands": [
             {
                 "command": "gmusic.playpause",
-                "title": "GMusic: Toggle Play Pause"
+                "title": "GMusic: Toggle Play Pause",
+                "icon": "Images/ppause.png"
             },
             {
                 "command": "gmusic.shuffle",
-                "title": "GMusic: Toggle Shuffle"
+                "title": "GMusic: Toggle Shuffle",
+                "icon": "Images/shuffle.png"
             },
             {
                 "command": "gmusic.skip",
-                "title": "GMusic: Skip Song"
+                "title": "GMusic: Skip Song",
+                "icon": "Images/forward.png"
             },
             {
                 "command": "gmusic.rewind",
-                "title": "GMusic: Rewind Song"
+                "title": "GMusic: Rewind Song",
+                "icon": "Images/back.png"
+
             },
             {
                 "command": "gmusic.setThumbs",
@@ -60,7 +65,28 @@
                 "command": "gmusic.restart",
                 "title": "GMusic: Restart"
             }
-        ]
+        ],
+        "menus": {
+            "touchBar": [
+                {
+                    "command": "gmusic.rewind",
+                    "group": "TBControls"
+                },
+                {
+                    "command": "gmusic.playpause",
+                    "group": "TBControls"
+                },
+                {
+                    "command": "gmusic.skip",
+                    "group": "TBControls"
+                },
+                {
+                    "command": "gmusic.shuffle",
+                    "group": "TBControls"
+                }
+
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
