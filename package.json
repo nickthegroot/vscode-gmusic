@@ -101,6 +101,14 @@
             "@typescript-eslint/eslint-plugin"
         ]
     },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.ts": ["standard --fix", "prettier-standard", "git add"]
+    },
     "scripts": {
         "vscode:prepublish": "yarn compile",
         "compile": "tsc -p ./",
@@ -112,6 +120,8 @@
         "@types/ws": "^6.0.1",
         "@typescript-eslint/eslint-plugin": "^1.11.0",
         "@typescript-eslint/parser": "^1.11.0",
+        "husky": "^3.0.0",
+        "lint-staged": "^9.1.0",
         "prettier-standard": "^9.1.1",
         "standard": "^12.0.1",
         "typescript": "^3.5.3",
