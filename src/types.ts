@@ -5,8 +5,16 @@ export interface Track {
   albumArt: string
 }
 
+type GoogleMusicChannels =
+  | 'connect'
+  | 'playState'
+  | 'track'
+  | 'rating'
+  | 'shuffle'
+  | 'repeat'
+
 export interface GoogleMusicResponse {
-  channel: string
+  channel: GoogleMusicChannels
   payload: any
 }
 

@@ -95,19 +95,16 @@
             ]
         }
     },
-    "standard": {
-        "parser": "@typescript-eslint/parser",
-        "plugins": [
-            "@typescript-eslint/eslint-plugin"
-        ]
-    },
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"
         }
     },
     "lint-staged": {
-        "*.ts": ["standard --fix", "prettier-standard", "git add"]
+        "*.ts": [
+            "eslint --fix",
+            "git add"
+        ]
     },
     "scripts": {
         "vscode:prepublish": "yarn compile",
@@ -120,10 +117,17 @@
         "@types/ws": "^6.0.1",
         "@typescript-eslint/eslint-plugin": "^1.11.0",
         "@typescript-eslint/parser": "^1.11.0",
+        "eslint": "^6.0.1",
+        "eslint-config-prettier": "^6.0.0",
+        "eslint-config-standard": "^12.0.0",
+        "eslint-plugin-import": "^2.18.0",
+        "eslint-plugin-node": "^9.1.0",
+        "eslint-plugin-prettier": "^3.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.0",
         "husky": "^3.0.0",
         "lint-staged": "^9.1.0",
-        "prettier-standard": "^9.1.1",
-        "standard": "^12.0.1",
+        "prettier": "^1.18.2",
         "typescript": "^3.5.3",
         "vscode": "^1.1.35"
     },

@@ -1,0 +1,33 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+        "standard",
+        "plugin:@typescript-eslint/recommended",
+        "prettier",
+        "prettier/@typescript-eslint",
+        "prettier/standard"
+    ],
+    "plugins": [
+        "@typescript-eslint",
+        "prettier",
+        "standard"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "modules": true
+        }
+    },
+    "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "prettier/prettier": [
+            "error",
+            {
+                "semi": false,
+                "singleQuote": true
+            }
+        ]
+    }
+}
