@@ -7,7 +7,7 @@
     "author": {
         "name": "Nick DeGroot"
     },
-    "license": "SEE LICENSE IN LICENSE",
+    "license": "MIT",
     "homepage": "https://github.com/nbd9/vscode-gmusic",
     "bugs": {
         "url": "https://github.com/nbd9/vscode-gmusic/issues",
@@ -38,32 +38,37 @@
         "commands": [
             {
                 "command": "gmusic.playpause",
-                "title": "GMusic: Toggle Play Pause",
-                "icon": "Images/ppause.png"
+                "title": "Toggle Play Pause",
+                "icon": "src/assets/ppause.png",
+                "category": "Google Play Music"
             },
             {
                 "command": "gmusic.shuffle",
-                "title": "GMusic: Toggle Shuffle",
-                "icon": "Images/shuffle.png"
+                "title": "Toggle Shuffle",
+                "icon": "src/assets/shuffle.png",
+                "category": "Google Play Music"
             },
             {
                 "command": "gmusic.skip",
-                "title": "GMusic: Skip Song",
-                "icon": "Images/forward.png"
+                "title": "Skip Song",
+                "icon": "src/assets/forward.png",
+                "category": "Google Play Music"
             },
             {
                 "command": "gmusic.rewind",
-                "title": "GMusic: Rewind Song",
-                "icon": "Images/back.png"
-
+                "title": "Rewind Song",
+                "icon": "src/assets/back.png",
+                "category": "Google Play Music"
             },
             {
                 "command": "gmusic.setThumbs",
-                "title": "GMusic: Like/Dislike Song"
+                "title": "Like/Dislike Song",
+                "category": "Google Play Music"
             },
             {
                 "command": "gmusic.restart",
-                "title": "GMusic: Restart"
+                "title": "Restart",
+                "category": "Google Play Music"
             }
         ],
         "menus": {
@@ -89,14 +94,13 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "yarn compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
         "typescript": "^2.6.1",
         "vscode": "^1.1.6"
