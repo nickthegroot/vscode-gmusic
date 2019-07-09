@@ -33,7 +33,9 @@
     "activationEvents": [
         "*"
     ],
-    "files": ["/out"],
+    "files": [
+        "/out"
+    ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
@@ -90,7 +92,6 @@
                     "command": "gmusic.shuffle",
                     "group": "GMusic@4"
                 }
-
             ]
         }
     },
@@ -101,12 +102,12 @@
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
-        "@types/node": "^7.0.43",
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6"
+        "@types/node": "^12.6.1",
+        "typescript": "^3.5.3",
+        "vscode": "^1.1.35"
     },
     "dependencies": {
         "vscode-cache": "^0.3.0",
-        "ws": "^3.3.1"
+        "ws": "^7.1.0"
     }
 }
