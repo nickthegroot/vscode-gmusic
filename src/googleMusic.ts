@@ -2,9 +2,16 @@ import {
   window,
   ExtensionContext,
   StatusBarAlignment,
-  StatusBarItem
+  StatusBarItem,
+  env
 } from 'vscode'
-import { Track, Rating, GoogleMusicResponse } from './types'
+import {
+  Track,
+  Rating,
+  GoogleMusicResponse,
+  GoogleMusicResultResponse,
+  GoogleMusicChannelResponse
+} from './types'
 import WebSocket = require('ws')
 import Cache = require('vscode-cache')
 
@@ -15,10 +22,14 @@ export default class GoogleMusic {
   private _statusBarItem: StatusBarItem
 
   private _track: Track
+  public get track() {
+    return this._track
+  }
   private _rating: Rating
   private _playState: boolean
   private _shuffle: string
   private _repeat: string
+
   private ws: WebSocket
 
   public constructor(context: ExtensionContext) {
@@ -54,9 +65,27 @@ export default class GoogleMusic {
     // Receiving data from GPMDP.
     this.ws.on('message', data => {
       let gMusicResponse: GoogleMusicResponse = JSON.parse(data.toString())
-      switch (gMusicResponse.channel) {
+      let gMusicResult: GoogleMusicResultResponse = gMusicResponse as GoogleMusicResultResponse
+      if (gMusicResult.namespace) {
+        switch (gMusicResult.requestID) {
+          case 'extra.getTrackURL':
+            window
+              .showInformationMessage(
+                `${this._track.title} - ${this._track.artist} \n ${gMusicResult.value}`,
+                'Copy URL to clipboard'
+              )
+              .then(() => {
+                env.clipboard.writeText(gMusicResult.value)
+                window.showInformationMessage('URL copied to clipboard')
+              })
+            break
+        }
+        console.log(gMusicResponse)
+      }
+      let gMusicChannel: GoogleMusicChannelResponse = gMusicResponse as GoogleMusicChannelResponse
+      switch (gMusicChannel.channel) {
         case 'connect':
-          if (gMusicResponse.payload === 'CODE_REQUIRED') {
+          if (gMusicChannel.payload === 'CODE_REQUIRED') {
             window
               .showInputBox({
                 prompt: 'Please input the number shown on GPMDP'
@@ -71,25 +100,29 @@ export default class GoogleMusic {
                 )
               })
           } else {
-            codeCache.put('authCode', gMusicResponse.payload)
+            codeCache.put('authCode', gMusicChannel.payload)
           }
           break
         case 'playState':
-          this._playState = gMusicResponse.payload
+          this._playState = gMusicChannel.payload
           break
         case 'track':
-          this._track = gMusicResponse.payload
+          this._track = gMusicChannel.payload
           this.refreshStatusBar()
           break
         case 'rating':
-          this._rating = gMusicResponse.payload
+          this._rating = gMusicChannel.payload
           break
         case 'shuffle':
-          this._shuffle = gMusicResponse.payload
+          this._shuffle = gMusicChannel.payload
           break
         case 'repeat':
-          this._repeat = gMusicResponse.payload
+          this._repeat = gMusicChannel.payload
           break
+        case 'time':
+          break
+        default:
+          console.log(gMusicChannel.channel)
       }
     })
 
@@ -155,6 +188,16 @@ export default class GoogleMusic {
         namespace: 'playback',
         method: 'setRepeat',
         arguments: mode
+      })
+    )
+  }
+
+  public getTrackURL() {
+    this.ws.send(
+      JSON.stringify({
+        namespace: 'extras',
+        method: 'getTrackURL',
+        requestID: 'extra.getTrackURL'
       })
     )
   }
