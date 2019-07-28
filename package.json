@@ -19,7 +19,7 @@
     },
     "icon": ".github/icon.png",
     "engines": {
-        "vscode": "^1.18.0"
+        "vscode": "^1.36.0"
     },
     "keywords": [
         "Google Play Music",
@@ -61,6 +61,11 @@
                 "command": "gmusic.rewind",
                 "title": "Rewind Song",
                 "icon": "src/assets/back.png",
+                "category": "Google Play Music"
+            },
+            {
+                "command": "gmusic.getTrackURL",
+                "title": "Get Current Track URL",
                 "category": "Google Play Music"
             },
             {

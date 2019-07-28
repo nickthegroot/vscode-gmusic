@@ -13,9 +13,15 @@ export function activate(context: ExtensionContext) {
   let skipCommand = commands.registerCommand('gmusic.skip', () => {
     gMusic.forward()
   })
+
   let rewindCommand = commands.registerCommand('gmusic.rewind', () => {
     gMusic.rewind()
   })
+
+  let getTrackURL = commands.registerCommand('gmusic.getTrackURL', () => {
+    gMusic.getTrackURL()
+  })
+
   let likeCommand = commands.registerCommand('gmusic.setThumbs', () => {
     window
       .showQuickPick(['Thumbs Up', 'Thumbs Down', 'Remove Rating'])
@@ -44,5 +50,6 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(rewindCommand)
   context.subscriptions.push(likeCommand)
   context.subscriptions.push(restartCommand)
+  context.subscriptions.push(getTrackURL)
   context.subscriptions.push(gMusic)
 }
