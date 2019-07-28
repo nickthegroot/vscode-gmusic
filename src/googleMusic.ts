@@ -80,7 +80,6 @@ export default class GoogleMusic {
               })
             break
         }
-        console.log(gMusicResponse)
       }
       let gMusicChannel: GoogleMusicChannelResponse = gMusicResponse as GoogleMusicChannelResponse
       switch (gMusicChannel.channel) {
