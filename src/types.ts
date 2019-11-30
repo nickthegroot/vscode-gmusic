@@ -1,3 +1,5 @@
+import { StatusBarItem } from 'vscode'
+
 export interface Track {
   title: string
   artist: string
@@ -21,4 +23,30 @@ export interface GoogleMusicResponse {
 export interface Rating {
   liked: boolean
   disliked: boolean
+}
+
+export enum RepeatMode {
+  None = 'NO_REPEAT',
+  Playlist = 'LIST_REPEAT',
+  Song = 'SINGLE_REPEAT'
+}
+
+export interface Button {
+  id: string
+  title: string
+  command: string
+  text: string
+  dynamicText?: (cond: boolean) => string
+  statusBarItem: StatusBarItem
+  isVisible: boolean
+}
+
+export interface KeyedCollection<T> {
+  Add(key: string, value: T)
+  ContainsKey(key: string): boolean
+  Count(): number
+  Item(key: string): T | null | undefined
+  Keys(): string[]
+  Remove(key: string): void
+  Values(): T[]
 }
