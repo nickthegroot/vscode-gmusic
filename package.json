@@ -72,6 +72,11 @@
                 "command": "gmusic.restart",
                 "title": "Restart",
                 "category": "Google Play Music"
+            },
+            {
+                "command": "gmusic.cycleRepeat",
+                "title": "Cycle Repeat Mode",
+                "category": "Google Play Music"
             }
         ],
         "menus": {

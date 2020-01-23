@@ -33,6 +33,12 @@ export function activate(context: ExtensionContext) {
         }
       })
   })
+  let cycleRepeatCommand = commands.registerCommand(
+    'gmusic.cycleRepeat',
+    () => {
+      gMusic.cycleRepeat()
+    }
+  )
   let restartCommand = commands.registerCommand('gmusic.restart', () => {
     gMusic.dispose()
     gMusic = new GoogleMusic(context)
@@ -44,5 +50,6 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(rewindCommand)
   context.subscriptions.push(likeCommand)
   context.subscriptions.push(restartCommand)
+  context.subscriptions.push(cycleRepeatCommand)
   context.subscriptions.push(gMusic)
 }

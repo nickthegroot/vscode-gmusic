@@ -4,7 +4,15 @@ import {
   StatusBarAlignment,
   StatusBarItem
 } from 'vscode'
-import { Track, Rating, GoogleMusicResponse } from './types'
+import {
+  Track,
+  Rating,
+  GoogleMusicResponse,
+  Button,
+  RepeatMode,
+  KeyedCollection
+} from './types'
+import { SimpleDictionary } from './utils'
 import WebSocket = require('ws')
 import Cache = require('vscode-cache')
 
@@ -12,7 +20,8 @@ import Cache = require('vscode-cache')
  * Constantly changing class that holds GPMDP data
  */
 export default class GoogleMusic {
-  private _statusBarItem: StatusBarItem
+  private _nowPlayingStatusBarItem: StatusBarItem
+  private _buttons: KeyedCollection<Button> = new SimpleDictionary<Button>()
 
   private _track: Track
   private _rating: Rating
@@ -23,8 +32,13 @@ export default class GoogleMusic {
 
   public constructor(context: ExtensionContext) {
     // Create as needed
-    if (!this._statusBarItem) {
-      this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left)
+    if (!this._nowPlayingStatusBarItem) {
+      this._nowPlayingStatusBarItem = window.createStatusBarItem(
+        StatusBarAlignment.Left
+      )
+    }
+    if (this._buttons.Count() === 0) {
+      this.createControlButtons()
     }
 
     this.ws = new WebSocket('ws://localhost:5672')
@@ -76,10 +90,12 @@ export default class GoogleMusic {
           break
         case 'playState':
           this._playState = gMusicResponse.payload
+          this.refreshNowPlaying()
+          this.updateDynamicButton('playpause', this._playState)
           break
         case 'track':
           this._track = gMusicResponse.payload
-          this.refreshStatusBar()
+          this.refreshNowPlaying()
           break
         case 'rating':
           this._rating = gMusicResponse.payload
@@ -89,6 +105,7 @@ export default class GoogleMusic {
           break
         case 'repeat':
           this._repeat = gMusicResponse.payload
+          this.updateRepeatButtonState()
           break
       }
     })
@@ -100,13 +117,93 @@ export default class GoogleMusic {
     )
   }
 
-  public refreshStatusBar() {
-    let textItem =
-      this._track && this._track.title && this._track.artist
-        ? '$(triangle-right) ' + this._track.title + ' - ' + this._track.artist
-        : '$(primitive-square)'
-    this._statusBarItem.text = textItem
-    this._statusBarItem.show()
+  private createControlButtons() {
+    const buttons = [
+      { id: 'rewind', title: 'Previous Song', text: '$(chevron-left)' },
+      {
+        id: 'playpause',
+        title: 'Play / Pause',
+        text: '$(triangle-right)',
+        dynamicText: (currentlyPlaying: boolean) =>
+          currentlyPlaying ? '$(primitive-square)' : '$(triangle-right)'
+      },
+      { id: 'skip', title: 'Next Song', text: '$(chevron-right)' },
+      { id: 'cycleRepeat', title: 'Not Repeating', text: '$(sync)' }
+    ]
+
+    buttons.map(button => {
+      const command = 'gmusic.' + button.id
+      var statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left)
+      statusBarItem.text = button.text
+      statusBarItem.command = command
+      statusBarItem.tooltip = button.title
+      this._buttons.Add(
+        button.id,
+        Object.assign({}, button, { command, statusBarItem, isVisible: true })
+      )
+      statusBarItem.show()
+    })
+    this.updateRepeatButtonState() // Set the initial state of the repeat button
+  }
+
+  private updateRepeatButtonState() {
+    const repeatButton = this._buttons.Item('cycleRepeat')
+    if (repeatButton == null) {
+      return // Button not created yet
+    }
+    const statusItem = repeatButton.statusBarItem
+    switch (this._repeat) {
+      case RepeatMode.None:
+        statusItem.text = '$(sync)'
+        statusItem.color = 'darkGrey'
+        statusItem.tooltip = 'Not Repeating'
+        break
+      case RepeatMode.Playlist:
+        statusItem.text = '$(sync)'
+        statusItem.color = 'white'
+        statusItem.tooltip = 'Repeating Playlist'
+        break
+      case RepeatMode.Song:
+        statusItem.text = '$(issue-reopened)'
+        statusItem.color = 'white'
+        statusItem.tooltip = 'Repeating Song'
+        break
+    }
+  }
+  private updateDynamicButton(id: string, condition: boolean) {
+    const button = this._buttons.Item(id)
+    const text = button.dynamicText(condition)
+    button.statusBarItem.text = text
+  }
+
+  public refreshNowPlaying() {
+    let textItem = this.getNowPlayingText(this._track)
+    if (textItem == null) {
+      this._nowPlayingStatusBarItem.hide()
+    }
+    this._nowPlayingStatusBarItem.text = textItem
+    this._nowPlayingStatusBarItem.show()
+  }
+
+  private getNowPlayingText(track: Track): string {
+    if (track == null || track.title === null) {
+      return null
+    }
+    return `${track.title} - ${track.artist}`
+  }
+
+  public cycleRepeat() {
+    switch (this._repeat) {
+      case RepeatMode.None:
+        this.toggleRepeat(RepeatMode.Playlist)
+        break
+      case RepeatMode.Playlist:
+        this.toggleRepeat(RepeatMode.Song)
+        break
+      case RepeatMode.Song:
+        this.toggleRepeat(RepeatMode.None)
+        break
+    }
   }
 
   public togglePlay() {
@@ -154,7 +251,7 @@ export default class GoogleMusic {
       JSON.stringify({
         namespace: 'playback',
         method: 'setRepeat',
-        arguments: mode
+        arguments: [mode]
       })
     )
   }
@@ -194,7 +291,16 @@ export default class GoogleMusic {
   }
 
   public dispose() {
-    this._statusBarItem.dispose()
+    this._nowPlayingStatusBarItem.dispose()
+    this._buttons.Values().forEach(button => {
+      button.statusBarItem.dispose()
+    })
     this.ws.close()
+    process.nextTick(() => {
+      if ([this.ws.OPEN, this.ws.CLOSING].includes(this.ws.readyState)) {
+        // Socket still hangs, hard close
+        this.ws.terminate()
+      }
+    })
   }
 }
